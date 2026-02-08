@@ -1,0 +1,609 @@
+<!-- cat > templates/add_customer.html << 'EOF' -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Customer - Customer Management</title>
+    <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(180deg, #2c3e50, #1a252f);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-header {
+            padding: 0 20px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-header i {
+            font-size: 32px;
+            color: #3498db;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .sidebar-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 20px;
+        }
+        
+        .sidebar-menu li {
+            margin: 5px 0;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            gap: 12px;
+            border-radius: 8px;
+        }
+        
+        .sidebar-menu a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding-left: 25px;
+        }
+        
+        .sidebar-menu a i {
+            width: 20px;
+            text-align: center;
+            font-size: 18px;
+        }
+        
+        .sidebar-menu .active a {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .logout-item {
+            position: absolute;
+            bottom: 30px;
+            width: calc(100% - 40px);
+            margin: 0 20px;
+        }
+        
+        .logout-btn {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #ff6b6b !important;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        .content-header h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .content-header h1 i {
+            color: #3498db;
+        }
+        
+        .btn-back {
+            padding: 12px 24px;
+            background-color: #7f8c8d;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-back:hover {
+            background-color: #6c7b7d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Alert Messages */
+        .alert {
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border-left: 4px solid;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #27ae60;
+            color: #155724;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #e74c3c;
+            color: #721c24;
+        }
+        
+        /* Form Container */
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .form-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .form-header h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .form-header p {
+            color: #7f8c8d;
+        }
+        
+        .customer-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .readonly-field {
+            background-color: #f8f9fa !important;
+            color: #666 !important;
+            cursor: not-allowed !important;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        .amount-input {
+            position: relative;
+        }
+        
+        .currency-symbol {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 600;
+            color: #666;
+        }
+        
+        .amount-input input {
+            padding-left: 40px !important;
+        }
+        
+        .checkbox-group {
+            margin-top: 20px;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+        
+        .checkbox-label input[type="checkbox"] {
+            width: auto;
+            transform: scale(1.2);
+            margin-right: 8px;
+        }
+        
+        .form-hint {
+            display: block;
+            margin-top: 8px;
+            color: #7f8c8d;
+            font-size: 13px;
+        }
+        
+        .form-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .form-footer {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #2980b9;
+        }
+        
+        .form-footer p {
+            color: #555;
+            font-size: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .sidebar-header h2,
+            .sidebar-menu a span {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+            
+            .sidebar-menu a {
+                justify-content: center;
+                padding: 15px;
+            }
+            
+            .sidebar-menu a i {
+                font-size: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .form-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-user-plus"></i>
+            <h2>Add Customer</h2>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li>
+                <a href="{{ url_for('dashboard') }}">
+                    <i class="fas fa-home"></i> <span>Home</span>
+                </a>
+            </li>
+            <li class="active">
+                <a href="{{ url_for('add_customer') }}">
+                    <i class="fas fa-user-plus"></i> <span>Add Customer</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('view_customers') }}">
+                    <i class="fas fa-list"></i> <span>View Customers</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('export_to_excel') }}">
+                    <i class="fas fa-file-excel"></i> <span>Export to Excel</span>
+                </a>
+            </li>
+            <li class="logout-item">
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="content-header">
+            <h1><i class="fas fa-user-plus"></i> Add New Customer</h1>
+            <a href="{{ url_for('view_customers') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back to Customers
+            </a>
+        </header>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Customer Form -->
+        <div class="form-container">
+            <form method="POST" action="{{ url_for('add_customer') }}" class="customer-form">
+                <!-- Form Header -->
+                <div class="form-header">
+                    <h2><i class="fas fa-id-card"></i> Customer Information</h2>
+                    <p>Fill in all required fields. All data is stored locally.</p>
+                </div>
+                
+                <!-- Auto-generated Serial Number -->
+                <div class="form-group">
+                    <label for="serial_no">
+                        <i class="fas fa-hashtag"></i> Serial Number (Auto-generated)
+                    </label>
+                    <input type="text" id="serial_no" value="{{ next_serial }}" readonly 
+                           class="readonly-field">
+                    <small class="form-hint">This number is auto-generated and cannot be changed</small>
+                </div>
+                
+                <!-- Customer ID -->
+                <div class="form-group">
+                    <label for="customer_id">
+                        <i class="fas fa-id-badge"></i> Customer ID *
+                    </label>
+                    <input type="text" id="customer_id" name="customer_id" 
+                           placeholder="Enter Customer ID (e.g., kn00001)" required
+                           pattern="kn\d{5}" title="Format: kn followed by 5 digits (e.g., kn00001)">
+                    <small class="form-hint">Format: kn followed by 5 digits (e.g., kn00001)</small>
+                </div>
+                
+                <!-- Customer Name -->
+                <div class="form-group">
+                    <label for="customer_name">
+                        <i class="fas fa-user"></i> Customer Name *
+                    </label>
+                    <input type="text" id="customer_name" name="customer_name" 
+                           placeholder="Enter full customer name" required>
+                </div>
+                
+                <!-- Product and Date (Side by Side) -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product">
+                            <i class="fas fa-box"></i> Product *
+                        </label>
+                        <select id="product" name="product" required>
+                            <option value="">Select a product</option>
+                            <option value="Inverter">Inverter</option>
+                            <option value="Battery">Battery</option>
+                            <option value="Solar Panel">Solar Panel</option>
+                            <option value="Charger">Charger</option>
+                            <option value="Controller">Controller</option>
+                            <option value="CCircuit Board">Circuit Board</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date">
+                            <i class="fas fa-calendar-alt"></i> Date *
+                        </label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+                </div>
+                
+                <!-- Contact and City (Side by Side) -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="contact">
+                            <i class="fas fa-phone"></i> Contact Number *
+                        </label>
+                        <input type="tel" id="contact" name="contact" 
+                               placeholder="Enter contact number" required
+                               pattern="[0-9]{10}" title="10 digit phone number">
+                        <small class="form-hint">10 digit number (e.g., 9876543210)</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="city">
+                            <i class="fas fa-city"></i> City *
+                        </label>
+                        <input type="text" id="city" name="city" 
+                               placeholder="Enter city name" required>
+                    </div>
+                </div>
+                
+                <!-- Amount -->
+                <div class="form-group">
+                    <label for="amount">
+                        <i class="fas fa-rupee-sign"></i> Amount (₹) *
+                    </label>
+                    <div class="amount-input">
+                        <span class="currency-symbol">₹</span>
+                        <input type="number" id="amount" name="amount" 
+                               placeholder="Enter amount" required min="0" step="0.01">
+                    </div>
+                    <small class="form-hint">Amount will be formatted as 50,000 in exports</small>
+                </div>
+                
+                <!-- Purchase Confirmation Checkbox -->
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="purchase_confirmed" name="purchase_confirmed">
+                        <i class="fas fa-check-circle"></i> Purchase Confirmed
+                    </label>
+                    <small class="form-hint">Check this if the customer has made the payment and received the product</small>
+                </div>
+                
+                <!-- Form Buttons -->
+                <div class="form-buttons">
+                    <button type="reset" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i> Clear Form
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Customer
+                    </button>
+                </div>
+                
+                <!-- Form Footer Note -->
+        </div>
+    </main>
+    
+    <!-- JavaScript -->
+    <script>
+        // Set today's date as default
+        document.getElementById('date').value = new Date().toISOString().split('T')[0];
+        
+        // Generate sample customer ID based on serial number
+        const serialInput = document.getElementById('serial_no');
+        const customerIdInput = document.getElementById('customer_id');
+        
+        serialInput.addEventListener('change', function(e) {
+            let serial = e.target.value;
+            if (serial && !customerIdInput.value) {
+                let customerId = 'kn' + serial.toString().padStart(5, '0');
+                customerIdInput.value = customerId;
+            }
+        });
+    </script>
+</body>
+</html>
+EOF

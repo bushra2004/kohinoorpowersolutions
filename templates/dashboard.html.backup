@@ -1,0 +1,579 @@
+<!-- cat > templates/dashboard.html << 'EOF' -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Customer Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(180deg, #2c3e50, #1a252f);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-header {
+            padding: 0 20px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-header i {
+            font-size: 32px;
+            color: #3498db;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .sidebar-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 20px;
+        }
+        
+        .sidebar-menu li {
+            margin: 5px 0;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            gap: 12px;
+            border-radius: 8px;
+        }
+        
+        .sidebar-menu a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding-left: 25px;
+        }
+        
+        .sidebar-menu a i {
+            width: 20px;
+            text-align: center;
+            font-size: 18px;
+        }
+        
+        .sidebar-menu .active a {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .logout-item {
+            position: absolute;
+            bottom: 30px;
+            width: calc(100% - 40px);
+            margin: 0 20px;
+        }
+        
+        .logout-btn {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #ff6b6b !important;
+        }
+        
+        .logout-btn:hover {
+            background-color: rgba(231, 76, 60, 0.3) !important;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        .content-header h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .content-header h1 i {
+            color: #3498db;
+        }
+        
+        .current-time {
+            background-color: #f8f9fa;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #666;
+            border: 1px solid #eaeaea;
+        }
+        
+        /* Alert Messages */
+        .alert {
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border-left: 4px solid;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #27ae60;
+            color: #155724;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #e74c3c;
+            color: #721c24;
+        }
+        
+        .alert-info {
+            background-color: #d1ecf1;
+            border-color: #2980b9;
+            color: #0c5460;
+        }
+        
+        /* Statistics Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+        }
+        
+        .total-customers {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+        }
+        
+        .total-amount {
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+        }
+        
+        .unlimited {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+        }
+        
+        .stat-info h3 {
+            color: #666;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 10px 0;
+        }
+        
+        .stat-desc {
+            font-size: 14px;
+            color: #95a5a6;
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .quick-actions h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .action-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .action-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .action-card:hover {
+            border-color: #3498db;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .add { background-color: #27ae60; }
+        .view { background-color: #2980b9; }
+        .export { background-color: #9b59b6; }
+        
+        .action-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .action-card p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        /* Instructions */
+        .instructions {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .instructions h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        
+        .step-number {
+            width: 36px;
+            height: 36px;
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .step p {
+            color: #555;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        
+        .step strong {
+            color: #2c3e50;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .sidebar-header h2,
+            .sidebar-menu a span {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+            
+            .sidebar-menu a {
+                justify-content: center;
+                padding: 15px;
+            }
+            
+            .sidebar-menu a i {
+                font-size: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .stats-container,
+            .action-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-chart-line"></i>
+            <h2>Dashboard</h2>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="active">
+                <a href="{{ url_for('dashboard') }}">
+                    <i class="fas fa-home"></i> <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('add_customer') }}">
+                    <i class="fas fa-user-plus"></i> <span>Add Customer</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('view_customers') }}">
+                    <i class="fas fa-list"></i> <span>View Customers</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('export_to_excel') }}">
+                    <i class="fas fa-file-excel"></i> <span>Export to Excel</span>
+                </a>
+            </li>
+            <li class="logout-item">
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer" style="position: absolute; bottom: 80px; width: 100%; padding: 0 20px; font-size: 13px; color: rgba(255, 255, 255, 0.6);">
+            <p>Welcome, <strong>admin</strong></p>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="content-header">
+            <h1><i class="fas fa-tachometer-alt"></i> KOHINOOR POWER SOLUTIONS</h1>
+            <div class="current-time" id="currentTime"></div>
+        </header>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Statistics Cards -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon total-customers">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Total Customers</h3>
+                    <p class="stat-number">{{ total_customers }}</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon total-amount">
+                    <i class="fas fa-rupee-sign"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Total Amount</h3>
+                    <p class="stat-number">₹{{ total_amount }}</p>
+                </div>
+            </div>
+            
+            <!-- <div class="stat-card">
+                <div class="stat-icon unlimited">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Storage</h3>
+                    <p class="stat-number">Unlimited</p>
+                    <p class="stat-desc">Local SQLite</p>
+                </div>
+            </div> -->
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
+            
+            <div class="action-cards">
+                <a href="{{ url_for('add_customer') }}" class="action-card">
+                    <div class="action-icon add">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h3>Add New Customer</h3>
+                    <p>Create a new customer record with all details</p>
+                </a>
+                
+                <a href="{{ url_for('view_customers') }}" class="action-card">
+                    <div class="action-icon view">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <h3>View All Customers</h3>
+                    <p>Browse, search, and manage customer records</p>
+                </a>
+                
+                <a href="{{ url_for('export_to_excel') }}" class="action-card">
+                    <div class="action-icon export">
+                        <i class="fas fa-file-export"></i>
+                    </div>
+                    <h3>Export to Excel</h3>
+                    <p>Download all data as Excel spreadsheet</p>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Instructions -->
+        <div class="instructions">
+            <h2><i class="fas fa-info-circle"></i> How to Use</h2>
+            <div class="steps">
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <p>Click <strong>"Add Customer"</strong> to create new records</p>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <p>Use <strong>"View Customers"</strong> to manage existing records</p>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <p>Click <strong>"Export to Excel"</strong> to download all data</p>
+                </div>
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <p>Data is stored <strong>locally</strong> in SQLite database</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- JavaScript -->
+    <script>
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            };
+            document.getElementById('currentTime').textContent = 
+                now.toLocaleDateString('en-US', options);
+        }
+        
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>
+EOF

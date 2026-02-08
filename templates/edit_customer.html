@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Customer - Customer Management</title>
+    <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-edit"></i>
+            <h2>Edit Customer</h2>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li>
+                <a href="{{ url_for('dashboard') }}">
+                    <i class="fas fa-home"></i> Home
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('add_customer') }}">
+                    <i class="fas fa-user-plus"></i> Add Customer
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('view_customers') }}">
+                    <i class="fas fa-list"></i> View Customers
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('export_to_excel') }}">
+                    <i class="fas fa-file-excel"></i> Export to Excel
+                </a>
+            </li>
+            <li class="logout-item">
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="content-header">
+            <h1><i class="fas fa-user-edit"></i> Edit Customer</h1>
+            <a href="{{ url_for('view_customers') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back to Customers
+            </a>
+        </header>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Customer Form -->
+        <div class="form-container">
+            <form method="POST" action="{{ url_for('edit_customer', id=customer.id) }}" class="customer-form">
+                <!-- Form Header -->
+                <div class="form-header">
+                    <h2><i class="fas fa-edit"></i> Edit Customer: {{ customer.customer_id }}</h2>
+                    <p>Update customer information. All fields are required.</p>
+                </div>
+                
+                <!-- Serial Number (Read-only) -->
+                <div class="form-group">
+                    <label for="serial_no">
+                        <i class="fas fa-hashtag"></i> Serial Number
+                    </label>
+                    <input type="text" id="serial_no" value="{{ customer.serial_no }}" readonly 
+                           class="readonly-field">
+                </div>
+                
+                <!-- Customer ID -->
+                <div class="form-group">
+                    <label for="customer_id">
+                        <i class="fas fa-id-badge"></i> Customer ID *
+                    </label>
+                    <input type="text" id="customer_id" name="customer_id" 
+                           value="{{ customer.customer_id }}" required
+                           pattern="kn\d{5}" title="Format: kn followed by 5 digits">
+                    <small class="form-hint">Format: kn followed by 5 digits (e.g., kn00001)</small>
+                </div>
+                
+                <!-- Customer Name -->
+                <div class="form-group">
+                    <label for="customer_name">
+                        <i class="fas fa-user"></i> Customer Name *
+                    </label>
+                    <input type="text" id="customer_name" name="customer_name" 
+                           value="{{ customer.customer_name }}" required>
+                </div>
+                
+                <!-- Product and Date -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product">
+                            <i class="fas fa-box"></i> Product *
+                        </label>
+                        <select id="product" name="product" required>
+                            <option value="">Select a product</option>
+                            <option value="Inverter" {% if customer.product == 'Inverter' %}selected{% endif %}>Inverter</option>
+                            <option value="Battery" {% if customer.product == 'Battery' %}selected{% endif %}>Battery</option>
+                            <option value="Solar Panel" {% if customer.product == 'Solar Panel' %}selected{% endif %}>Solar Panel</option>
+                            <option value="Charger" {% if customer.product == 'Charger' %}selected{% endif %}>Charger</option>
+                            <option value="Controller" {% if customer.product == 'Controller' %}selected{% endif %}>Controller</option>
+                            <option value="Other" {% if customer.product == 'Other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date">
+                            <i class="fas fa-calendar-alt"></i> Date *
+                        </label>
+                        <input type="date" id="date" name="date" 
+                               value="{{ customer.date }}" required>
+                    </div>
+                </div>
+                
+                <!-- Contact and City -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="contact">
+                            <i class="fas fa-phone"></i> Contact Number *
+                        </label>
+                        <input type="tel" id="contact" name="contact" 
+                               value="{{ customer.contact }}" required
+                               pattern="[0-9]{10}" title="10 digit phone number">
+                        <small class="form-hint">10 digit number</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="city">
+                            <i class="fas fa-city"></i> City *
+                        </label>
+                        <input type="text" id="city" name="city" 
+                               value="{{ customer.city }}" required>
+                    </div>
+                </div>
+                
+                <!-- Amount -->
+                <div class="form-group">
+                    <label for="amount">
+                        <i class="fas fa-rupee-sign"></i> Amount (₹) *
+                    </label>
+                    <div class="amount-input">
+                        <span class="currency-symbol">₹</span>
+                        <input type="number" id="amount" name="amount" 
+                               value="{{ customer.amount }}" required min="0" step="0.01">
+                    </div>
+                </div>
+                
+                <!-- Purchase Confirmation -->
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="purchase_confirmed" name="purchase_confirmed"
+                               {% if customer.purchase_confirmed %}checked{% endif %}>
+                        <span class="checkmark"></span>
+                        <i class="fas fa-check-circle"></i> Purchase Confirmed
+                    </label>
+                </div>
+                
+                <!-- Form Buttons -->
+                <div class="form-buttons">
+                    <a href="{{ url_for('view_customers') }}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Update Customer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kohinoor Power Solutions - Customer Management</title>
+    <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .header-with-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .header-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: contain;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+            background: white;
+        }
+        
+        .company-title {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .company-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #2c3e50;
+            line-height: 1.2;
+        }
+        
+        .company-tagline {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div style="text-align: center; margin-bottom: 15px;">
+                <img src="{{ url_for('static', filename='logo.png') }}" 
+                     alt="Kohinoor Power Solutions Logo" 
+                     style="width: 60px; height: 60px; border-radius: 8px; object-fit: contain;">
+            </div>
+            <h2 style="font-size: 18px; margin: 10px 0; color: white;">Dashboard</h2>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="active">
+                <a href="{{ url_for('dashboard') }}">
+                    <i class="fas fa-home"></i> <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('add_customer') }}">
+                    <i class="fas fa-user-plus"></i> <span>Add Customer</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('view_customers') }}">
+                    <i class="fas fa-list"></i> <span>View Customers</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('export_to_excel') }}">
+                    <i class="fas fa-file-excel"></i> <span>Export to Excel</span>
+                </a>
+            </li>
+            <li class="logout-item">
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <p>Welcome, <strong>{{ current_user.username }}</strong></p>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header with Logo -->
+        <header class="content-header">
+            <div class="header-with-logo">
+                <img src="{{ url_for('static', filename='logo.png') }}" 
+                     alt="Kohinoor Power Solutions Logo" 
+                     class="header-logo">
+                <div class="company-title">
+                    <div class="company-name">KOHINOOR POWER SOLUTIONS</div>
+                    <div class="company-tagline">Automobile Batteries & CCTV Solutions</div>
+                </div>
+            </div>
+            <div class="current-time" id="currentTime"></div>
+        </header>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Statistics Cards -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon total-customers">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Total Customers</h3>
+                    <p class="stat-number">{{ total_customers }}</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon total-amount">
+                    <i class="fas fa-rupee-sign"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Total Amount</h3>
+                    <p class="stat-number">₹{{ total_amount }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
+            
+            <div class="action-cards">
+                <a href="{{ url_for('add_customer') }}" class="action-card">
+                    <div class="action-icon add">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h3>Add New Customer</h3>
+                    <p>Create a new customer record with all details</p>
+                </a>
+                
+                <a href="{{ url_for('view_customers') }}" class="action-card">
+                    <div class="action-icon view">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <h3>View All Customers</h3>
+                    <p>Browse, search, and manage customer records</p>
+                </a>
+                
+                <a href="{{ url_for('export_to_excel') }}" class="action-card">
+                    <div class="action-icon export">
+                        <i class="fas fa-file-export"></i>
+                    </div>
+                    <h3>Export to Excel</h3>
+                    <p>Download all data as Excel spreadsheet</p>
+                </a>
+            </div>
+        </div>
+        
+        <!-- How to Use -->
+        <div class="instructions">
+            <h2><i class="fas fa-info-circle"></i> How to Use</h2>
+            <div class="steps">
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <p>Click <strong>"Add Customer"</strong> to create new records</p>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <p>Use <strong>"View Customers"</strong> to manage existing records</p>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <p>Click <strong>"Export to Excel"</strong> to download all data</p>
+                </div>
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <p>Data is stored <strong>locally</strong> in SQLite database</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer Note -->
+        <div style="margin-top: 30px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #2980b9; font-size: 13px; color: #555;">
+            <p><i class="fas fa-map-marker-alt"></i> <strong>Location:</strong> Darga Cross, Gulbarga (Kalaburagi)</p>
+            <p><i class="fas fa-shield-alt"></i> <strong>Services:</strong> Automobile Batteries | CCTV Installation | Security Solutions</p>
+        </div>
+    </main>
+    
+    <!-- JavaScript -->
+    <script>
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            };
+            document.getElementById('currentTime').textContent = 
+                now.toLocaleDateString('en-US', options);
+        }
+        
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>
