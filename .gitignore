@@ -6,3 +6,5 @@ exports/
 *.csv
 __pycache__/
 .DS_Store
+.vercel
+.env*.local
