@@ -1,4 +1,5 @@
+# wsgi.py - Entry point for Vercel
 from app import app
 
-if __name__ == "__main__":
-    app.run()
+# This is needed for Vercel serverless deployment
+handler = app
