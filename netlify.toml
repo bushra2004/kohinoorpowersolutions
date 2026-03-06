@@ -1,11 +1,14 @@
 [build]
   command = "pip install -r requirements.txt"
-  publish = "publish"  # Create an empty publish directory
+  publish = "."
 
 [build.environment]
   PYTHON_VERSION = "3.11.11"
 
 [[redirects]]
   from = "/*"
-  to = "/"
+  to = "/.netlify/functions/app"
   status = 200
+
+[functions]
+  directory = "netlify/functions"
