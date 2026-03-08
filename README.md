@@ -21,13 +21,13 @@ A professional, local customer management system for Kohinoor Power Solutions - 
 
 ## 📦 Installation
 
-### Method 1: Standard Installation
-```bash
+Standard Installation
+
 # Clone the repository
-git clone https://github.com/bushra2004/customer-management-system.git
+git clone https://github.com/bushra2004/kohinoorpowersolutions.git
 
 # Navigate to project
-cd customer-management-system
+cd kohinoorpowersolutions
 
 # Install dependencies
 pip install -r requirements.txt
@@ -36,4 +36,10 @@ pip install -r requirements.txt
 python app.py
 
 # Open browser and go to: http://localhost:5001
-# Login: admin / admin123
+# Login with credentials 
+
+# ScreenShots 
+
+![alt text](<Screenshot 2026-03-08 at 6.30.58 PM.png>)
+![alt text](<Screenshot 2026-03-08 at 6.31.19 PM.png>)
+![alt text](<Screenshot 2026-03-08 at 6.31.46 PM.png>)

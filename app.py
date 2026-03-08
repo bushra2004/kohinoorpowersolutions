@@ -30,7 +30,7 @@ app.config['DATABASE_URL'] = os.environ.get('DATABASE_URL')  # PostgreSQL connec
 # Validate database URL
 if not app.config['DATABASE_URL']:
     logger.error("DATABASE_URL environment variable not set!")
-    raise ValueError("DATABASE_URL must be set")
+    raise ValueError("postgresql://neondb_owner:npg_o8jGXdR3gKCh@ep-mute-thunder-aiqm7did-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require")
 
 # ============================================================================
 # SETUP LOGIN MANAGER
@@ -169,13 +169,13 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         
-        if username == 'admin' and password == 'admin123':
+        if username == 'kps' and password == 'kps2008':
             login_user(admin_user)
-            flash('✅ Login successful!', 'success')
+            flash('Login successful!', 'success')
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('dashboard'))
         else:
-            flash('❌ Invalid username or password', 'danger')
+            flash('Invalid username or password', 'danger')
     
     return render_template('login.html')
 
@@ -184,7 +184,7 @@ def login():
 def logout():
     """Logs out the current user"""
     logout_user()
-    flash('👋 Logged out successfully', 'info')
+    flash('Logged out successfully', 'info')
     return redirect(url_for('login'))
 
 @app.route('/dashboard')
@@ -492,12 +492,15 @@ if __name__ == '__main__':
     # Initialize database
     init_database()
     
+    # Get port from environment variable or use default
+    port = int(os.environ.get('PORT', 5001))
+    
     print("=" * 60)
     print("🚀 KOHINOOR POWER SOLUTIONS - CUSTOMER MANAGEMENT")
     print("=" * 60)
-    print("📊 Database: PostgreSQL (Neon)")
-    print("🔗 Local URL: http://127.0.0.1:5001")
+    print(f"📊 Database: PostgreSQL (Neon)")
+    print(f"🔗 Local URL: http://127.0.0.1:{port}")
     print("👤 Login: admin / admin123")
     print("=" * 60)
     
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=False)

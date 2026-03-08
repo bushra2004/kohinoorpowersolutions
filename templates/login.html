@@ -157,52 +157,13 @@
             box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
         }
         
-        .login-info {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            border-left: 4px solid #2980b9;
-            font-size: 14px;
-        }
-        
-        .login-info p {
-            margin: 5px 0;
-            color: #555;
-        }
-        
-        .login-info code {
-            background-color: #e8f4fc;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: monospace;
-            color: #2980b9;
-        }
-        
         .login-footer {
             text-align: center;
             margin-top: 20px;
             color: rgba(255, 255, 255, 0.8);
             font-size: 14px;
         }
-        
-        /* Responsive logo sizing */
-        @media (max-width: 480px) {
-            .company-logo {
-                max-width: 80px;
-                max-height: 80px;
-            }
-            
-            .login-header h1 {
-                font-size: 24px;
-            }
-            
-            .login-box {
-                padding: 30px 20px;
-            }
-        }
-        
-        /* Logo fallback styling */
+
         .logo-fallback {
             width: 100px;
             height: 100px;
@@ -222,10 +183,8 @@
 <body>
     <div class="login-container">
         <div class="login-box">
-            <!-- Logo/Header -->
             <div class="login-header">
                 <div class="logo-container">
-                    <!-- Logo image - will show fallback if logo not found -->
                     <img src="{{ url_for('static', filename='logo.png') }}" 
                          alt="Company Logo" 
                          class="company-logo"
@@ -238,7 +197,6 @@
                 <p>Administrator Login</p>
             </div>
             
-            <!-- Flash Messages -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, message in messages %}
@@ -247,35 +205,30 @@
                 {% endif %}
             {% endwith %}
             
-            <!-- Login Form -->
             <form method="POST" action="{{ url_for('login') }}" class="login-form">
                 <div class="form-group">
                     <label for="username">
                         <i class="fas fa-user"></i> Username
                     </label>
                     <input type="text" id="username" name="username" 
-                           placeholder="Enter admin username" required 
-                           value="admin">
+                           placeholder="Enter admin username" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="password">
                         <i class="fas fa-lock"></i> Password
                     </label>
-                    <input type="password" id="password" name="password" 
-                           placeholder="Enter password" required
-                           value="admin123">
+                    <div style="position: relative;">
+                        <input type="password" id="password" name="password" 
+                               placeholder="Enter password" required>
+                        <i class="fas fa-eye" id="togglePassword" 
+                           style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #7f8c8d;"></i>
+                    </div>
                 </div>
-                
+
                 <button type="submit" class="btn-login">
                     <i class="fas fa-sign-in-alt"></i> Login
                 </button>
-                
-                <div class="login-info">
-                    <p><strong>Default Credentials:</strong></p>
-                    <p>Username: <code>admin</code></p>
-                    <p>Password: <code>admin123</code></p>
-                </div>
             </form>
         </div>
         
@@ -283,5 +236,20 @@
             <p>© 2008 Kohinoor Power Solutions | Gulbarga's Trusted Battery & Security Specialists</p>
         </div>
     </div>
+
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#password');
+
+        togglePassword.addEventListener('click', function () {
+            // Toggle the type attribute
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Toggle the eye icon class
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    </script>
 </body>
 </html>
