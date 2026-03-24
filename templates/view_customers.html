@@ -1,11 +1,11 @@
-<!-- cat > templates/view_customers.html << 'EOF' -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Customers - Customer Management</title>
+    <title>View Customers - Kohinoor Power Solutions</title>
     <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -21,7 +21,6 @@
             min-height: 100vh;
         }
         
-        /* Sidebar */
         .sidebar {
             position: fixed;
             left: 0;
@@ -103,7 +102,6 @@
             color: #ff6b6b !important;
         }
         
-        /* Main Content */
         .main-content {
             margin-left: 250px;
             padding: 30px;
@@ -162,7 +160,6 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         
-        /* Alert Messages */
         .alert {
             padding: 15px 20px;
             margin-bottom: 20px;
@@ -188,7 +185,6 @@
             color: #721c24;
         }
         
-        /* Search Bar */
         .search-container {
             background: white;
             border-radius: 12px;
@@ -260,7 +256,6 @@
             background-color: #d5d5d5;
         }
         
-        /* Customer Table */
         .table-container {
             background: white;
             border-radius: 12px;
@@ -276,7 +271,7 @@
         .customer-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1000px;
+            min-width: 1300px;
         }
         
         .customer-table thead {
@@ -306,6 +301,7 @@
         .customer-table td {
             padding: 18px 15px;
             font-size: 14px;
+            vertical-align: middle;
         }
         
         .serial {
@@ -313,24 +309,24 @@
             color: #2c3e50;
         }
         
-        .customer-id {
-            font-family: monospace;
-            background-color: #f0f8ff;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-        
         .customer-name {
             font-weight: 600;
             color: #2c3e50;
+        }
+        
+        .product {
+            color: #2980b9;
+        }
+        
+        .product-name {
+            color: #e67e22;
+            font-style: italic;
         }
         
         .amount {
             font-weight: 700;
             color: #27ae60;
             font-family: monospace;
-            font-size: 15px !important;
         }
         
         .purchase-status .status-badge {
@@ -340,10 +336,9 @@
             font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
         
-        .status-badge.confirmed {
+        .status-badge.completed {
             background-color: #d4edda;
             color: #155724;
         }
@@ -351,6 +346,22 @@
         .status-badge.pending {
             background-color: #fff3cd;
             color: #856404;
+        }
+        
+        .address-cell {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .notes-preview {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #7f8c8d;
+            font-size: 13px;
         }
         
         .actions {
@@ -384,7 +395,6 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         
-        /* No Data State */
         .no-data {
             text-align: center;
             padding: 60px 20px;
@@ -427,7 +437,6 @@
             box-shadow: 0 6px 12px rgba(33, 150, 83, 0.3);
         }
         
-        /* Responsive Design */
         @media (max-width: 992px) {
             .sidebar {
                 width: 70px;
@@ -478,7 +487,6 @@
             }
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <!-- Navigation Sidebar -->
@@ -546,7 +554,7 @@
             <form method="GET" action="{{ url_for('view_customers') }}" class="search-form">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
-                    <input type="text" name="search" placeholder="Search customers by ID, name, product, or city..." 
+                    <input type="text" name="search" placeholder="Search by mobile number, name, product, or notes..."
                            value="{{ search_query }}">
                     <button type="submit" class="btn-search">Search</button>
                 </div>
@@ -560,20 +568,21 @@
         
         <!-- Customer Table -->
         <div class="table-container">
-            {% if customers %}
+            {% if customers and customers|length > 0 %}
             <div class="table-responsive">
                 <table class="customer-table">
                     <thead>
                         <tr>
                             <th>S.No</th>
-                            <th>Customer ID</th>
-                            <th>Name</th>
+                            <th>Customer Name</th>
+                            <th>Mobile</th>
+                            <th>Address</th>
                             <th>Product</th>
-                            <th>Date</th>
-                            <th>Contact</th>
-                            <th>City</th>
+                            <th>Product Name</th>
                             <th>Amount</th>
+                            <th>Date</th>
                             <th>Purchase</th>
+                            <th>Notes</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -581,17 +590,22 @@
                         {% for customer in customers %}
                         <tr>
                             <td class="serial">{{ customer.serial_no }}</td>
-                            <td class="customer-id">{{ customer.customer_id }}</td>
                             <td class="customer-name">{{ customer.customer_name }}</td>
+                            <td>{{ customer.contact }}</td>
+                            <td class="address-cell" title="{{ customer.address }}">
+                                {{ (customer.address or '')[:30] }}{% if customer.address and customer.address|length > 30 %}...{% endif %}
+                            </td>
                             <td class="product">{{ customer.product }}</td>
-                            <td class="date">{{ customer.date }}</td>
-                            <td class="contact">{{ customer.contact }}</td>
-                            <td class="city">{{ customer.city }}</td>
+                            <td class="product-name">{{ customer.product_name }}</td>
                             <td class="amount">₹{{ customer.amount_formatted }}</td>
+                            <td>{{ customer.date_formatted }}</td>
                             <td class="purchase-status">
-                                <span class="status-badge {% if customer.purchase_confirmed %}confirmed{% else %}pending{% endif %}">
+                                <span class="status-badge {% if customer.purchase_confirmed %}completed{% else %}pending{% endif %}">
                                     {{ customer.purchase_icon }}
                                 </span>
+                            </td>
+                            <td class="notes-preview" title="{{ customer.action_notes or '' }}">
+                                {{ (customer.action_notes or '')[:20] }}{% if customer.action_notes and customer.action_notes|length > 20 %}...{% endif %}
                             </td>
                             <td class="actions">
                                 <a href="{{ url_for('edit_customer', id=customer.id) }}" 
@@ -600,7 +614,7 @@
                                 </a>
                                 <a href="{{ url_for('delete_customer', id=customer.id) }}" 
                                    class="btn-action btn-delete" 
-                                   onclick="return confirm('Are you sure you want to delete customer {{ customer.customer_id }}?')"
+                                   onclick="return confirm('Are you sure you want to delete customer {{ customer.customer_name }}?')"
                                    title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </a>
@@ -610,6 +624,11 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Table Summary -->
+            <div style="padding: 15px; background: #f8f9fa; border-top: 1px solid #e9ecef; display: flex; justify-content: space-between;">
+                <span><strong>Total Records:</strong> {{ customers|length }}</span>
+                <span><strong>Total Amount:</strong> ₹{{ customers|sum(attribute='amount') }}</span>
             
             {% else %}
             <!-- No Records Found -->
@@ -632,4 +651,3 @@
     </main>
 </body>
 </html>
-EOF

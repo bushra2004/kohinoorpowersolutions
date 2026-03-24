@@ -1,11 +1,11 @@
-<!-- cat > templates/add_customer.html << 'EOF' -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Customer - Customer Management</title>
+    <title>Add Customer - Kohinoor Power Solutions</title>
     <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -15,244 +15,162 @@
         }
         
         body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-        }
-        
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 250px;
-            height: 100vh;
-            background: linear-gradient(180deg, #2c3e50, #1a252f);
-            color: white;
-            padding: 20px 0;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .sidebar-header {
-            padding: 0 20px 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 20px;
-        }
-        
-        .sidebar-header i {
-            font-size: 32px;
-            color: #3498db;
-            margin-bottom: 10px;
-            display: block;
-        }
-        
-        .sidebar-header h2 {
-            font-size: 20px;
-            font-weight: 600;
-        }
-        
-        .sidebar-menu {
-            list-style: none;
-            padding: 0 20px;
-        }
-        
-        .sidebar-menu li {
-            margin: 5px 0;
-        }
-        
-        .sidebar-menu a {
+            padding: 40px 20px;
             display: flex;
+            justify-content: center;
             align-items: center;
-            padding: 14px 20px;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-size: 15px;
-            gap: 12px;
-            border-radius: 8px;
         }
         
-        .sidebar-menu a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-            padding-left: 25px;
+        .form-container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
         }
         
-        .sidebar-menu a i {
-            width: 20px;
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
             text-align: center;
-            font-size: 18px;
-        }
-        
-        .sidebar-menu .active a {
-            background-color: #3498db;
-            color: white;
-        }
-        
-        .logout-item {
-            position: absolute;
-            bottom: 30px;
-            width: calc(100% - 40px);
-            margin: 0 20px;
-        }
-        
-        .logout-btn {
-            background-color: rgba(231, 76, 60, 0.2);
-            color: #ff6b6b !important;
-        }
-        
-        /* Main Content */
-        .main-content {
-            margin-left: 250px;
-            padding: 30px;
-            min-height: 100vh;
-        }
-        
-        .content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             padding-bottom: 20px;
-            border-bottom: 2px solid #eaeaea;
+            border-bottom: 2px solid #f0f0f0;
         }
         
-        .content-header h1 {
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
             color: #2c3e50;
             font-size: 28px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            margin-bottom: 5px;
         }
         
-        .content-header h1 i {
-            color: #3498db;
+        .header p {
+            color: #7f8c8d;
+            font-size: 14px;
         }
         
-        .btn-back {
-            padding: 12px 24px;
-            background-color: #7f8c8d;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-back:hover {
-            background-color: #6c7b7d;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* Alert Messages */
         .alert {
             padding: 15px 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            border-left: 4px solid;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             animation: slideIn 0.3s ease;
         }
         
         @keyframes slideIn {
-            from { transform: translateX(-20px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
         
         .alert-success {
-            background-color: #d4edda;
-            border-color: #27ae60;
+            background: #d4edda;
+            border-left: 4px solid #28a745;
             color: #155724;
         }
         
         .alert-danger {
-            background-color: #f8d7da;
-            border-color: #e74c3c;
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
             color: #721c24;
         }
         
-        /* Form Container */
-        .form-container {
-            background: white;
-            border-radius: 12px;
-            padding: 40px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .form-header {
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        
-        .form-header h2 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .form-header p {
-            color: #7f8c8d;
-        }
-        
-        .customer-form {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
         }
         
         .form-group {
             margin-bottom: 20px;
         }
         
-        .form-group label {
-            display: block;
-            margin-bottom: 10px;
-            color: #2c3e50;
-            font-weight: 600;
-            font-size: 15px;
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+        
+        label {
             display: flex;
             align-items: center;
             gap: 8px;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 14px;
         }
         
-        .form-group input,
-        .form-group select {
+        label i {
+            color: #3498db;
+            width: 18px;
+        }
+        
+        .required::after {
+            content: "*";
+            color: #e74c3c;
+            margin-left: 4px;
+        }
+        
+        input, select, textarea {
             width: 100%;
-            padding: 14px 16px;
+            padding: 12px 15px;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 10px;
+            font-size: 15px;
             transition: all 0.3s ease;
-            background-color: white;
+            background: #f8f9fa;
         }
         
-        .form-group input:focus,
-        .form-group select:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
         }
         
-        .readonly-field {
-            background-color: #f8f9fa !important;
-            color: #666 !important;
-            cursor: not-allowed !important;
+        textarea {
+            resize: vertical;
+            min-height: 80px;
         }
         
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
+        .serial-field {
+            background: #e9ecef;
+            font-weight: 600;
+            color: #2c3e50;
+            border: 2px solid #dee2e6;
+            cursor: not-allowed;
         }
         
         .amount-input {
@@ -261,349 +179,316 @@
         
         .currency-symbol {
             position: absolute;
-            left: 16px;
+            left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            font-weight: 600;
             color: #666;
+            font-weight: 600;
+            z-index: 1;
         }
         
         .amount-input input {
-            padding-left: 40px !important;
+            padding-left: 35px;
         }
         
         .checkbox-group {
-            margin-top: 20px;
-        }
-        
-        .checkbox-label {
             display: flex;
             align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            font-size: 16px;
-            color: #2c3e50;
+            gap: 10px;
+            margin-top: 10px;
         }
         
-        .checkbox-label input[type="checkbox"] {
-            width: auto;
-            transform: scale(1.2);
-            margin-right: 8px;
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #27ae60;
+        }
+        
+        .checkbox-group label {
+            margin-bottom: 0;
+            cursor: pointer;
+            color: #2c3e50;
         }
         
         .form-hint {
             display: block;
-            margin-top: 8px;
-            color: #7f8c8d;
-            font-size: 13px;
+            margin-top: 5px;
+            color: #95a5a6;
+            font-size: 12px;
         }
         
         .form-buttons {
             display: flex;
-            justify-content: flex-end;
             gap: 15px;
             margin-top: 30px;
-            padding-top: 30px;
-            border-top: 1px solid #eee;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
         }
         
         .btn {
             padding: 14px 30px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            text-decoration: none;
+            justify-content: center;
+            gap: 10px;
+            flex: 1;
         }
         
         .btn-primary {
-            background-color: #3498db;
+            background: linear-gradient(135deg, #3498db, #2980b9);
             color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(52,152,219,0.3);
         }
         
         .btn-secondary {
-            background-color: #95a5a6;
+            background: #95a5a6;
             color: white;
         }
         
-        .btn:hover {
+        .btn-secondary:hover {
+            background: #7f8c8d;
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
         
-        .form-footer {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            border-left: 4px solid #2980b9;
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
         }
         
-        .form-footer p {
-            color: #555;
-            font-size: 14px;
+        .btn-danger:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .product-serial {
             display: flex;
-            align-items: flex-start;
             gap: 10px;
+            align-items: center;
         }
         
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            .sidebar {
-                width: 70px;
-            }
-            
-            .sidebar-header h2,
-            .sidebar-menu a span {
-                display: none;
-            }
-            
-            .main-content {
-                margin-left: 70px;
-            }
-            
-            .sidebar-menu a {
-                justify-content: center;
-                padding: 15px;
-            }
-            
-            .sidebar-menu a i {
-                font-size: 20px;
-            }
+        .product-serial input {
+            flex: 1;
+        }
+        
+        .serial-hint {
+            font-size: 11px;
+            color: #27ae60;
+            margin-top: 5px;
         }
         
         @media (max-width: 768px) {
-            .main-content {
-                padding: 20px;
-            }
-            
-            .content-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-            
-            .form-row {
+            .form-grid {
                 grid-template-columns: 1fr;
-                gap: 0;
             }
             
-            .form-container {
-                padding: 20px;
+            .form-group.full-width {
+                grid-column: span 1;
             }
             
             .form-buttons {
                 flex-direction: column;
             }
             
-            .btn {
-                width: 100%;
-                justify-content: center;
+            .form-card {
+                padding: 25px;
             }
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Navigation Sidebar -->
-    <nav class="sidebar">
-        <div class="sidebar-header">
-            <i class="fas fa-user-plus"></i>
-            <h2>Add Customer</h2>
-        </div>
-        
-        <ul class="sidebar-menu">
-            <li>
-                <a href="{{ url_for('dashboard') }}">
-                    <i class="fas fa-home"></i> <span>Home</span>
-                </a>
-            </li>
-            <li class="active">
-                <a href="{{ url_for('add_customer') }}">
-                    <i class="fas fa-user-plus"></i> <span>Add Customer</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ url_for('view_customers') }}">
-                    <i class="fas fa-list"></i> <span>View Customers</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ url_for('export_to_excel') }}">
-                    <i class="fas fa-file-excel"></i> <span>Export to Excel</span>
-                </a>
-            </li>
-            <li class="logout-item">
-                <a href="{{ url_for('logout') }}" class="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Header -->
-        <header class="content-header">
-            <h1><i class="fas fa-user-plus"></i> Add New Customer</h1>
-            <a href="{{ url_for('view_customers') }}" class="btn-back">
-                <i class="fas fa-arrow-left"></i> Back to Customers
-            </a>
-        </header>
-        
-        <!-- Flash Messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        
-        <!-- Customer Form -->
-        <div class="form-container">
-            <form method="POST" action="{{ url_for('add_customer') }}" class="customer-form">
-                <!-- Form Header -->
-                <div class="form-header">
-                    <h2><i class="fas fa-id-card"></i> Customer Information</h2>
-                    <p>Fill in all required fields. All data is stored locally.</p>
-                </div>
-                
-                <!-- Auto-generated Serial Number -->
-                <div class="form-group">
-                    <label for="serial_no">
-                        <i class="fas fa-hashtag"></i> Serial Number (Auto-generated)
-                    </label>
-                    <input type="text" id="serial_no" value="{{ next_serial }}" readonly 
-                           class="readonly-field">
-                    <small class="form-hint">This number is auto-generated and cannot be changed</small>
-                </div>
-                
-                <!-- Customer ID -->
-                <div class="form-group">
-                    <label for="customer_id">
-                        <i class="fas fa-id-badge"></i> Customer ID *
-                    </label>
-                    <input type="text" id="customer_id" name="customer_id" 
-                           placeholder="Enter Customer ID (e.g., kn00001)" required
-                           pattern="kn\d{5}" title="Format: kn followed by 5 digits (e.g., kn00001)">
-                    <small class="form-hint">Format: kn followed by 5 digits (e.g., kn00001)</small>
-                </div>
-                
-                <!-- Customer Name -->
-                <div class="form-group">
-                    <label for="customer_name">
-                        <i class="fas fa-user"></i> Customer Name *
-                    </label>
-                    <input type="text" id="customer_name" name="customer_name" 
-                           placeholder="Enter full customer name" required>
-                </div>
-                
-                <!-- Product and Date (Side by Side) -->
-                <div class="form-row">
+    <div class="form-container">
+        <div class="form-card">
+            <div class="header">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Kohinoor Power Solutions" class="logo" onerror="this.style.display='none'">
+                <h1>Add New Customer</h1>
+                <p>Kohinoor Power Solutions - Darga Cross, Gulbarga</p>
+            </div>
+            
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <i class="fas {% if category == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <!-- Customer Form -->
+            <form method="POST" action="{{ url_for('add_customer') }}">
+                <div class="form-grid">
+                    <!-- 1. Serial Number (Auto) -->
                     <div class="form-group">
-                        <label for="product">
-                            <i class="fas fa-box"></i> Product *
-                        </label>
-                        <select id="product" name="product" required>
-                            <option value="">Select a product</option>
-                            <option value="Inverter">Inverter</option>
-                            <option value="Battery">Battery</option>
-                            <option value="Solar Panel">Solar Panel</option>
-                            <option value="Charger">Charger</option>
-                            <option value="Controller">Controller</option>
-                            <option value="CCircuit Board">Circuit Board</option>
-                            <option value="Other">Other</option>
+                        <label><i class="fas fa-hashtag"></i> <span class="required">S/No</span></label>
+                        <input type="text" class="serial-field" value="{{ next_serial }}" readonly>
+                        <small class="form-hint">Auto-generated</small>
+                    </div>
+                    
+                    <!-- 2. Customer Name -->
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> <span class="required">Customer Name</span></label>
+                        <input type="text" name="customer_name" placeholder="Enter full name" required maxlength="100">
+                    </div>
+                    
+                    <!-- 3. Mobile Number -->
+                    <div class="form-group">
+                        <label><i class="fas fa-phone"></i> <span class="required">Mobile Number</span></label>
+                        <input type="tel" name="contact" placeholder="10 digit mobile number" required 
+                               pattern="[0-9]{10}" title="Please enter a valid 10-digit mobile number"
+                               maxlength="10" minlength="10">
+                        <small class="form-hint">Search customers by contact number</small>
+                    </div>
+                    
+                    <!-- 4. Address -->
+                    <div class="form-group full-width">
+                        <label><i class="fas fa-map-marker-alt"></i> <span class="required">Address</span></label>
+                        <textarea name="address" placeholder="Enter complete address" required rows="3"></textarea>
+                    </div>
+                    
+                    <!-- 5. Product (Category) - Updated with new products -->
+                    <div class="form-group">
+                        <label><i class="fas fa-box"></i> <span class="required">Product</span></label>
+                        <select name="product" id="product" required>
+                            <option value="">1- Select Product</option>
+                            <option value="Inverter">2- Inverter</option>
+                            <option value="Battery">3- Battery</option>
+                            <option value="Solar Panel">4- Solar Panel</option>
+                            <option value="CCTV Camera">5- CCTV Camera</option>
+                            <option value="Circuit Board">6- Circuit Board</option>
+                            <option value="Controller">7- Controller</option>
+                            <option value="Charger">8- Charger</option>
+                            <option value="Other">9- Other</option>
                         </select>
+                        <small class="form-hint">Select product category</small>
                     </div>
                     
+                    <!-- 6. Product Name (Specific) with Auto Serial -->
                     <div class="form-group">
-                        <label for="date">
-                            <i class="fas fa-calendar-alt"></i> Date *
-                        </label>
-                        <input type="date" id="date" name="date" required>
-                    </div>
-                </div>
-                
-                <!-- Contact and City (Side by Side) -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="contact">
-                            <i class="fas fa-phone"></i> Contact Number *
-                        </label>
-                        <input type="tel" id="contact" name="contact" 
-                               placeholder="Enter contact number" required
-                               pattern="[0-9]{10}" title="10 digit phone number">
-                        <small class="form-hint">10 digit number (e.g., 9876543210)</small>
+                        <label><i class="fas fa-tag"></i> <span class="required">Product Name</span></label>
+                        <div class="product-serial">
+                            <input type="text" id="product_name" name="product_name" placeholder="e.g., 150Ah Battery, 4MP Camera" required style="flex: 2;">
+                        </div>
+                        <small class="form-hint">Enter specific product details</small>
                     </div>
                     
+                    <!-- 7. Amount -->
                     <div class="form-group">
-                        <label for="city">
-                            <i class="fas fa-city"></i> City *
+                        <label><i class="fas fa-rupee-sign"></i> <span class="required">Amount</span></label>
+                        <div class="amount-input">
+                            <span class="currency-symbol">₹</span>
+                            <input type="number" name="amount" placeholder="0.00" required min="0" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <!-- 8. Date -->
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-alt"></i> <span class="required">Date</span></label>
+                        <input type="date" name="date" required value="{{ now.strftime('%Y-%m-%d') if now else '' }}">
+                    </div>
+                    
+                    <!-- 9. Purchase Confirmation -->
+                    <div class="form-group">
+                        <label><i class="fas fa-check-circle"></i> <span class="required">Purchase</span></label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" name="purchase_confirmed" id="purchase_confirmed" style="width: 20px; height: 20px;">
+                            <label for="purchase_confirmed" style="margin: 0;">Payment Received</label>
+                        </div>
+                    </div>
+                    
+                    <!-- 10. ACTION NOTES FIELD -->
+                    <div class="form-group full-width">
+                        <label for="action_notes">
+                            <i class="fas fa-clipboard-list"></i> Action / Notes
                         </label>
-                        <input type="text" id="city" name="city" 
-                               placeholder="Enter city name" required>
+                        <textarea id="action_notes" name="action_notes" placeholder="Enter status updates, delivery notes, special instructions, follow-up reminders, etc." rows="3"></textarea>
+                        <small class="form-hint">
+                            <i class="fas fa-info-circle"></i> 
+                            Add any notes about this customer: delivery status, installation date, warranty info, follow-up reminders, special requests.
+                        </small>
                     </div>
                 </div>
                 
-                <!-- Amount -->
-                <div class="form-group">
-                    <label for="amount">
-                        <i class="fas fa-rupee-sign"></i> Amount (₹) *
-                    </label>
-                    <div class="amount-input">
-                        <span class="currency-symbol">₹</span>
-                        <input type="number" id="amount" name="amount" 
-                               placeholder="Enter amount" required min="0" step="0.01">
-                    </div>
-                    <small class="form-hint">Amount will be formatted as 50,000 in exports</small>
-                </div>
-                
-                <!-- Purchase Confirmation Checkbox -->
-                <div class="form-group checkbox-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="purchase_confirmed" name="purchase_confirmed">
-                        <i class="fas fa-check-circle"></i> Purchase Confirmed
-                    </label>
-                    <small class="form-hint">Check this if the customer has made the payment and received the product</small>
-                </div>
-                
-                <!-- Form Buttons -->
+                <!-- Action Buttons -->
                 <div class="form-buttons">
                     <button type="reset" class="btn btn-secondary">
-                        <i class="fas fa-redo"></i> Clear Form
+                        <i class="fas fa-redo-alt"></i> Clear
                     </button>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Save Customer
                     </button>
+                    <a href="{{ url_for('view_customers') }}" class="btn btn-danger">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
                 </div>
-                
-                <!-- Form Footer Note -->
+            </form>
+            
+            <!-- Search Hint -->
+            <div style="margin-top: 20px; padding: 10px; background: #e8f4fc; border-radius: 8px; font-size: 13px; color: #2980b9; text-align: center;">
+                <i class="fas fa-search"></i> 
+                <strong>Note:</strong> You can search customers by mobile number in the View Customers page
+            </div>
         </div>
-    </main>
+    </div>
     
-    <!-- JavaScript -->
     <script>
         // Set today's date as default
-        document.getElementById('date').value = new Date().toISOString().split('T')[0];
-        
-        // Generate sample customer ID based on serial number
-        const serialInput = document.getElementById('serial_no');
-        const customerIdInput = document.getElementById('customer_id');
-        
-        serialInput.addEventListener('change', function(e) {
-            let serial = e.target.value;
-            if (serial && !customerIdInput.value) {
-                let customerId = 'kn' + serial.toString().padStart(5, '0');
-                customerIdInput.value = customerId;
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.querySelector('input[name="date"]');
+            if (!dateInput.value) {
+                const today = new Date().toISOString().split('T')[0];
+                dateInput.value = today;
+            }
+            
+            // Auto-format mobile number input (numbers only)
+            const mobileInput = document.querySelector('input[name="contact"]');
+            if (mobileInput) {
+                mobileInput.addEventListener('input', function(e) {
+                    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+                });
+            }
+            
+            // Auto-generate product serial based on product selection
+            const productSelect = document.getElementById('product');
+            const productNameInput = document.getElementById('product_name');
+            
+            if (productSelect && productNameInput) {
+                productSelect.addEventListener('change', function() {
+                    const selectedProduct = this.value;
+                    const serialNo = document.querySelector('.serial-field').value;
+                    
+                    if (selectedProduct === 'Circuit Board') {
+                        productNameInput.placeholder = 'e.g., PCB-001, Main Board, Control Board';
+                    } else if (selectedProduct === 'Controller') {
+                        productNameInput.placeholder = 'e.g., MPPT Controller, PWM Controller, Solar Controller';
+                    } else if (selectedProduct === 'Charger') {
+                        productNameInput.placeholder = 'e.g., 12V Charger, 24V Charger, Smart Charger';
+                    } else if (selectedProduct === 'Inverter') {
+                        productNameInput.placeholder = 'e.g., 1kVA Inverter, 2kVA Inverter, Pure Sine Wave';
+                    } else if (selectedProduct === 'Battery') {
+                        productNameInput.placeholder = 'e.g., 150Ah Battery, 200Ah Battery';
+                    } else if (selectedProduct === 'Solar Panel') {
+                        productNameInput.placeholder = 'e.g., 100W Panel, 200W Panel';
+                    } else if (selectedProduct === 'CCTV Camera') {
+                        productNameInput.placeholder = 'e.g., 2MP Camera, 4MP Camera, Dome Camera';
+                    } else {
+                        productNameInput.placeholder = 'Enter specific product details';
+                    }
+                });
             }
         });
     </script>
 </body>
 </html>
-EOF

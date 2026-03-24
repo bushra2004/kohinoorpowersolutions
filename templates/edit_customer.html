@@ -3,175 +3,408 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Customer - Customer Management</title>
+    <title>Edit Customer - Kohinoor Power Solutions</title>
     <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/png">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .form-container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+        
+        label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        label i {
+            color: #3498db;
+            width: 18px;
+        }
+        
+        .required::after {
+            content: "*";
+            color: #e74c3c;
+            margin-left: 4px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .serial-field {
+            background: #e9ecef;
+            font-weight: 600;
+            color: #2c3e50;
+            border: 2px solid #dee2e6;
+            cursor: not-allowed;
+        }
+        
+        .amount-input {
+            position: relative;
+        }
+        
+        .currency-symbol {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-weight: 600;
+            z-index: 1;
+        }
+        
+        .amount-input input {
+            padding-left: 35px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #27ae60;
+        }
+        
+        .checkbox-group label {
+            margin-bottom: 0;
+            cursor: pointer;
+            color: #2c3e50;
+        }
+        
+        .form-hint {
+            display: block;
+            margin-top: 5px;
+            color: #95a5a6;
+            font-size: 12px;
+        }
+        
+        .form-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+        
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex: 1;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(52,152,219,0.3);
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+            
+            .form-buttons {
+                flex-direction: column;
+            }
+            
+            .form-card {
+                padding: 25px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation Sidebar -->
-    <nav class="sidebar">
-        <div class="sidebar-header">
-            <i class="fas fa-edit"></i>
-            <h2>Edit Customer</h2>
-        </div>
-        
-        <ul class="sidebar-menu">
-            <li>
-                <a href="{{ url_for('dashboard') }}">
-                    <i class="fas fa-home"></i> Home
-                </a>
-            </li>
-            <li>
-                <a href="{{ url_for('add_customer') }}">
-                    <i class="fas fa-user-plus"></i> Add Customer
-                </a>
-            </li>
-            <li>
-                <a href="{{ url_for('view_customers') }}">
-                    <i class="fas fa-list"></i> View Customers
-                </a>
-            </li>
-            <li>
-                <a href="{{ url_for('export_to_excel') }}">
-                    <i class="fas fa-file-excel"></i> Export to Excel
-                </a>
-            </li>
-            <li class="logout-item">
-                <a href="{{ url_for('logout') }}" class="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
-            </li>
-        </ul>
-    </nav>
-    
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Header -->
-        <header class="content-header">
-            <h1><i class="fas fa-user-edit"></i> Edit Customer</h1>
-            <a href="{{ url_for('view_customers') }}" class="btn-back">
-                <i class="fas fa-arrow-left"></i> Back to Customers
-            </a>
-        </header>
-        
-        <!-- Flash Messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        
-        <!-- Customer Form -->
-        <div class="form-container">
-            <form method="POST" action="{{ url_for('edit_customer', id=customer.id) }}" class="customer-form">
-                <!-- Form Header -->
-                <div class="form-header">
-                    <h2><i class="fas fa-edit"></i> Edit Customer: {{ customer.customer_id }}</h2>
-                    <p>Update customer information. All fields are required.</p>
-                </div>
-                
-                <!-- Serial Number (Read-only) -->
-                <div class="form-group">
-                    <label for="serial_no">
-                        <i class="fas fa-hashtag"></i> Serial Number
-                    </label>
-                    <input type="text" id="serial_no" value="{{ customer.serial_no }}" readonly 
-                           class="readonly-field">
-                </div>
-                
-                <!-- Customer ID -->
-                <div class="form-group">
-                    <label for="customer_id">
-                        <i class="fas fa-id-badge"></i> Customer ID *
-                    </label>
-                    <input type="text" id="customer_id" name="customer_id" 
-                           value="{{ customer.customer_id }}" required
-                           pattern="kn\d{5}" title="Format: kn followed by 5 digits">
-                    <small class="form-hint">Format: kn followed by 5 digits (e.g., kn00001)</small>
-                </div>
-                
-                <!-- Customer Name -->
-                <div class="form-group">
-                    <label for="customer_name">
-                        <i class="fas fa-user"></i> Customer Name *
-                    </label>
-                    <input type="text" id="customer_name" name="customer_name" 
-                           value="{{ customer.customer_name }}" required>
-                </div>
-                
-                <!-- Product and Date -->
-                <div class="form-row">
+    <div class="form-container">
+        <div class="form-card">
+            <div class="header">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Kohinoor Power Solutions" class="logo" onerror="this.style.display='none'">
+                <h1>Edit Customer</h1>
+                <p>Kohinoor Power Solutions - Darga Cross, Gulbarga</p>
+            </div>
+            
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <i class="fas {% if category == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <!-- Edit Customer Form - Note the action is edit_customer -->
+            <form method="POST" action="{{ url_for('edit_customer', id=customer.id) }}">
+                <div class="form-grid">
+                    <!-- 1. Serial Number (Auto, Read-only) -->
                     <div class="form-group">
-                        <label for="product">
-                            <i class="fas fa-box"></i> Product *
-                        </label>
-                        <select id="product" name="product" required>
-                            <option value="">Select a product</option>
+                        <label><i class="fas fa-hashtag"></i> <span class="required">S/No</span></label>
+                        <input type="text" class="serial-field" value="{{ customer.serial_no }}" readonly>
+                        <small class="form-hint">Auto-generated, cannot be changed</small>
+                    </div>
+                    
+                    <!-- 2. Customer Name -->
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> <span class="required">Customer Name</span></label>
+                        <input type="text" name="customer_name" value="{{ customer.customer_name }}" placeholder="Enter full name" required maxlength="100">
+                    </div>
+                    
+                    <!-- 3. Mobile Number -->
+                    <div class="form-group">
+                        <label><i class="fas fa-phone"></i> <span class="required">Mobile Number</span></label>
+                        <input type="tel" name="contact" value="{{ customer.contact }}" placeholder="10 digit mobile number" required 
+                               pattern="[0-9]{10}" title="Please enter a valid 10-digit mobile number"
+                               maxlength="10" minlength="10">
+                        <small class="form-hint">Search customers by contact number</small>
+                    </div>
+                    
+                    <!-- 4. Address -->
+                    <div class="form-group full-width">
+                        <label><i class="fas fa-map-marker-alt"></i> <span class="required">Address</span></label>
+                        <textarea name="address" placeholder="Enter complete address" required rows="3">{{ customer.address }}</textarea>
+                    </div>
+                    
+                    <!-- 5. Product (Category) - Updated with new products -->
+                    <div class="form-group">
+                        <label><i class="fas fa-box"></i> <span class="required">Product</span></label>
+                        <select name="product" id="product" required>
+                            <option value="">Select Product</option>
                             <option value="Inverter" {% if customer.product == 'Inverter' %}selected{% endif %}>Inverter</option>
                             <option value="Battery" {% if customer.product == 'Battery' %}selected{% endif %}>Battery</option>
                             <option value="Solar Panel" {% if customer.product == 'Solar Panel' %}selected{% endif %}>Solar Panel</option>
-                            <option value="Charger" {% if customer.product == 'Charger' %}selected{% endif %}>Charger</option>
+                            <option value="CCTV Camera" {% if customer.product == 'CCTV Camera' %}selected{% endif %}>CCTV Camera</option>
+                            <option value="Circuit Board" {% if customer.product == 'Circuit Board' %}selected{% endif %}>Circuit Board</option>
                             <option value="Controller" {% if customer.product == 'Controller' %}selected{% endif %}>Controller</option>
+                            <option value="Charger" {% if customer.product == 'Charger' %}selected{% endif %}>Charger</option>
                             <option value="Other" {% if customer.product == 'Other' %}selected{% endif %}>Other</option>
                         </select>
+                        <small class="form-hint">Select product category</small>
                     </div>
                     
+                    <!-- 6. Product Name (Specific) -->
                     <div class="form-group">
-                        <label for="date">
-                            <i class="fas fa-calendar-alt"></i> Date *
-                        </label>
-                        <input type="date" id="date" name="date" 
-                               value="{{ customer.date }}" required>
-                    </div>
-                </div>
-                
-                <!-- Contact and City -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="contact">
-                            <i class="fas fa-phone"></i> Contact Number *
-                        </label>
-                        <input type="tel" id="contact" name="contact" 
-                               value="{{ customer.contact }}" required
-                               pattern="[0-9]{10}" title="10 digit phone number">
-                        <small class="form-hint">10 digit number</small>
+                        <label><i class="fas fa-tag"></i> <span class="required">Product Name</span></label>
+                        <input type="text" id="product_name" name="product_name" value="{{ customer.product_name }}" placeholder="e.g., 150Ah Battery, 4MP Camera" required>
+                        <small class="form-hint">Enter specific product details</small>
                     </div>
                     
+                    <!-- 7. Amount -->
                     <div class="form-group">
-                        <label for="city">
-                            <i class="fas fa-city"></i> City *
+                        <label><i class="fas fa-rupee-sign"></i> <span class="required">Amount</span></label>
+                        <div class="amount-input">
+                            <span class="currency-symbol">₹</span>
+                            <input type="number" name="amount" value="{{ customer.amount }}" placeholder="0.00" required min="0" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <!-- 8. Date -->
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-alt"></i> <span class="required">Date</span></label>
+                        <input type="date" name="date" value="{{ customer.date }}" required>
+                    </div>
+                    
+                    <!-- 9. Purchase Confirmation -->
+                    <div class="form-group">
+                        <label><i class="fas fa-check-circle"></i> <span class="required">Purchase</span></label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" name="purchase_confirmed" id="purchase_confirmed" {% if customer.purchase_confirmed %}checked{% endif %} style="width: 20px; height: 20px;">
+                            <label for="purchase_confirmed" style="margin: 0;">Payment Received</label>
+                        </div>
+                    </div>
+                    
+                    <!-- 10. ACTION NOTES FIELD -->
+                    <div class="form-group full-width">
+                        <label for="action_notes">
+                            <i class="fas fa-clipboard-list"></i> Action / Notes
                         </label>
-                        <input type="text" id="city" name="city" 
-                               value="{{ customer.city }}" required>
+                        <textarea id="action_notes" name="action_notes" placeholder="Enter status updates, delivery notes, special instructions, follow-up reminders, etc." rows="3">{{ customer.action_notes or '' }}</textarea>
+                        <small class="form-hint">
+                            <i class="fas fa-info-circle"></i> 
+                            Add any notes about this customer: delivery status, installation date, warranty info, follow-up reminders, special requests.
+                        </small>
                     </div>
                 </div>
                 
-                <!-- Amount -->
-                <div class="form-group">
-                    <label for="amount">
-                        <i class="fas fa-rupee-sign"></i> Amount (₹) *
-                    </label>
-                    <div class="amount-input">
-                        <span class="currency-symbol">₹</span>
-                        <input type="number" id="amount" name="amount" 
-                               value="{{ customer.amount }}" required min="0" step="0.01">
-                    </div>
-                </div>
-                
-                <!-- Purchase Confirmation -->
-                <div class="form-group checkbox-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="purchase_confirmed" name="purchase_confirmed"
-                               {% if customer.purchase_confirmed %}checked{% endif %}>
-                        <span class="checkmark"></span>
-                        <i class="fas fa-check-circle"></i> Purchase Confirmed
-                    </label>
-                </div>
-                
-                <!-- Form Buttons -->
+                <!-- Action Buttons -->
                 <div class="form-buttons">
                     <a href="{{ url_for('view_customers') }}" class="btn btn-secondary">
                         <i class="fas fa-times"></i> Cancel
@@ -182,8 +415,46 @@
                 </div>
             </form>
         </div>
-    </main>
+    </div>
     
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-format mobile number input (numbers only)
+            const mobileInput = document.querySelector('input[name="contact"]');
+            if (mobileInput) {
+                mobileInput.addEventListener('input', function(e) {
+                    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+                });
+            }
+            
+            // Dynamic placeholder for product name based on selection
+            const productSelect = document.getElementById('product');
+            const productNameInput = document.getElementById('product_name');
+            
+            if (productSelect && productNameInput) {
+                productSelect.addEventListener('change', function() {
+                    const selectedProduct = this.value;
+                    
+                    if (selectedProduct === 'Circuit Board') {
+                        productNameInput.placeholder = 'e.g., PCB-001, Main Board, Control Board';
+                    } else if (selectedProduct === 'Controller') {
+                        productNameInput.placeholder = 'e.g., MPPT Controller, PWM Controller, Solar Controller';
+                    } else if (selectedProduct === 'Charger') {
+                        productNameInput.placeholder = 'e.g., 12V Charger, 24V Charger, Smart Charger';
+                    } else if (selectedProduct === 'Inverter') {
+                        productNameInput.placeholder = 'e.g., 1kVA Inverter, 2kVA Inverter, Pure Sine Wave';
+                    } else if (selectedProduct === 'Battery') {
+                        productNameInput.placeholder = 'e.g., 150Ah Battery, 200Ah Battery';
+                    } else if (selectedProduct === 'Solar Panel') {
+                        productNameInput.placeholder = 'e.g., 100W Panel, 200W Panel';
+                    } else if (selectedProduct === 'CCTV Camera') {
+                        productNameInput.placeholder = 'e.g., 2MP Camera, 4MP Camera, Dome Camera';
+                    } else {
+                        productNameInput.placeholder = 'Enter specific product details';
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
